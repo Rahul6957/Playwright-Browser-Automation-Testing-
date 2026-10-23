@@ -1,0 +1,173 @@
+{
+  "info": {
+    "_postman_id": "85ef2a71-557e-40b3-a351-d314bfc2b087",
+    "name": "BookHub Backend API",
+    "description": "BookHub REST API examples. Set userToken and adminToken after login; apply migrations/001_create_carts.sql before cart/order workflows.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{userToken}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "userToken", "value": "" },
+    { "key": "adminToken", "value": "" },
+    { "key": "bookId", "value": "1" },
+    { "key": "categoryId", "value": "1" },
+    { "key": "orderId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        { "name": "API status", "request": { "method": "GET", "url": "{{baseUrl}}/" } }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"full_name\": \"BookHub Reader\",\n  \"email\": \"reader@example.com\",\n  \"password\": \"change-this-password\",\n  \"phone\": \"5551234\"\n}" },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"reader@example.com\",\n  \"password\": \"change-this-password\"\n}" },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        { "name": "Profile", "request": { "method": "GET", "url": "{{baseUrl}}/api/auth/profile" } }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        { "name": "List active books", "request": { "method": "GET", "url": "{{baseUrl}}/api/books" } },
+        { "name": "Get book", "request": { "method": "GET", "url": "{{baseUrl}}/api/books/{{bookId}}" } },
+        {
+          "name": "Create book (ADMIN)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"category_id\": 1,\n  \"title\": \"Example Book\",\n  \"author\": \"Example Author\",\n  \"description\": \"Example description\",\n  \"price\": 12.50,\n  \"stock\": 5,\n  \"image_url\": null\n}" },
+            "url": "{{baseUrl}}/api/books"
+          }
+        },
+        {
+          "name": "Update book (ADMIN)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"category_id\": 1,\n  \"title\": \"Updated Example Book\",\n  \"author\": \"Example Author\",\n  \"description\": \"Updated description\",\n  \"price\": 14.00,\n  \"stock\": 8,\n  \"image_url\": null\n}" },
+            "url": "{{baseUrl}}/api/books/{{bookId}}"
+          }
+        },
+        {
+          "name": "Soft-delete book (ADMIN)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/books/{{bookId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        { "name": "List categories", "request": { "method": "GET", "url": "{{baseUrl}}/api/categories" } },
+        { "name": "Get category", "request": { "method": "GET", "url": "{{baseUrl}}/api/categories/{{categoryId}}" } },
+        {
+          "name": "Create category (ADMIN)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"category_name\": \"Example Category\",\n  \"description\": \"Example description\"\n}" },
+            "url": "{{baseUrl}}/api/categories"
+          }
+        },
+        {
+          "name": "Update category (ADMIN)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"category_name\": \"Updated Example\",\n  \"description\": \"Updated description\"\n}" },
+            "url": "{{baseUrl}}/api/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "Delete category (ADMIN)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/categories/{{categoryId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Add item",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"book_id\": 1,\n  \"quantity\": 2\n}" },
+            "url": "{{baseUrl}}/api/cart"
+          }
+        },
+        { "name": "Get cart", "request": { "method": "GET", "url": "{{baseUrl}}/api/cart" } },
+        {
+          "name": "Set item quantity",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"quantity\": 3\n}" },
+            "url": "{{baseUrl}}/api/cart/{{bookId}}"
+          }
+        },
+        { "name": "Remove item", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/cart/{{bookId}}" } },
+        { "name": "Clear cart", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/cart" } }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"delivery_address\": \"12 Main Street\"\n}" },
+            "url": "{{baseUrl}}/api/orders"
+          }
+        },
+        { "name": "List orders", "request": { "method": "GET", "url": "{{baseUrl}}/api/orders" } },
+        { "name": "Get order", "request": { "method": "GET", "url": "{{baseUrl}}/api/orders/{{orderId}}" } },
+        { "name": "Get order items", "request": { "method": "GET", "url": "{{baseUrl}}/api/orders/{{orderId}}/items" } },
+        { "name": "Cancel order", "request": { "method": "PUT", "url": "{{baseUrl}}/api/orders/{{orderId}}/cancel" } }
+      ]
+    },
+    {
+      "name": "Bills",
+      "item": [
+        { "name": "Get or generate bill", "request": { "method": "GET", "url": "{{baseUrl}}/api/bills/{{orderId}}" } },
+        { "name": "Download JSON bill", "request": { "method": "GET", "url": "{{baseUrl}}/api/bills/{{orderId}}/download" } }
+      ]
+    }
+  ]
+}
